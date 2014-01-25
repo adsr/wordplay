@@ -211,6 +211,7 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--use_stdin', action='store_true', help='read stdin instead of key input')
     args = vars(parser.parse_args())
     wordplay = Wordplay()
+    print >> sys.stderr, args
     print >> sys.stderr, 'Loading cmudict...'
     wordplay.load_cmudict(args['dict'], args['phones'])
     print >> sys.stderr, 'Loaded!'
@@ -219,9 +220,10 @@ if __name__ == "__main__":
             line = sys.stdin.readline()
         else:
             line = raw_input('> ')
-        line = line.strip()
-        if len(line) < 1:
-            break
+            line = line.strip()
+            if len(line) < 1:
+                break
         output = wordplay.get_wordplay(line.strip())
         if output:
-            print output
+            print >> sys.stdout, output
+            sys.stdout.flush()
