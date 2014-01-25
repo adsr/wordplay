@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import re
 import random
+import sys
+import argparse
 
 class Wordplay:
     """Algorithmic wordplay"""
@@ -203,13 +205,23 @@ class Wordplay:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Algorithmic wordplay tool.')
+    parser.add_argument('-d', '--dict', required=True, help='cmudict path')
+    parser.add_argument('-p', '--phones', required=True, help='cmudict phones path')
+    parser.add_argument('-s', '--use_stdin', action='store_true', help='read stdin instead of key input')
+    args = vars(parser.parse_args())
     wordplay = Wordplay()
-    print "Loading..."
-    wordplay.load_cmudict('cmudict.0.7a', 'cmudict.0.7a.phones')
-    print "Loaded!"
+    print >> sys.stderr, 'Loading cmudict...'
+    wordplay.load_cmudict(args['dict'], args['phones'])
+    print >> sys.stderr, 'Loaded!'
     while True:
-        str = raw_input("> ")
-        str = str.strip()
-        if len(str) < 1:
+        if args['use_stdin']:
+            line = sys.stdin.readline()
+        else:
+            line = raw_input('> ')
+        line = line.strip()
+        if len(line) < 1:
             break
-        print wordplay.get_wordplay(str)
+        output = wordplay.get_wordplay(line.strip())
+        if output:
+            print output
